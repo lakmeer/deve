@@ -1,0 +1,57 @@
+{
+  "name": "deve",
+  "version": "0.0.1",
+  "description": "2D top-down two-stick space shooter MMO",
+  "main": "index.js",
+  "authors": [
+    "lakmeer (github.com/lakmeer)",
+    "sreerambo (github.com/sreerambo)"
+  ],
+  "scripts": {
+    "test": "mocha -u tdd --compilers ls:LiveScript --watch --watch-extensions ls",
+    "coverage": "mocha -u tdd --require blanket -R html-cov > coverage.html",
+    "develop": "nodemon app/index.ls",
+    "bundle-react": "mkdir -p client/lib ; browserify -r react > client/lib/react.js",
+    "start": "lsc index.js"
+  },
+  "keywords": [
+    "livescript",
+    "gulp",
+    "browserify",
+    "require",
+    "template",
+    "project"
+  ],
+  "license": "GPL3",
+  "dependencies": {
+    "gulp": "^3.8.8",
+    "liveify": "^0.4.0",
+    "browserify": "^5.11.1",
+    "gulp-connect": "^2.0.6",
+    "gulp-watch": "^0.6.8",
+    "LiveScript": "^1.3.1",
+    "vinyl-source-stream": "^1.0.0",
+    "gulp-util": "^3.0.1",
+    "gulp-livescript": "^2.2.0",
+    "gulp-browserify": "^0.5.0",
+    "blanket": "^1.1.6",
+    "sinon": "^1.11.1",
+    "mocha": "^2.0.1",
+    "nodemon": "^1.2.1",
+    "gulp-develop-server": "^0.2.5",
+    "gulp-livereload": "^2.1.1"
+  },
+  "devDependencies": {
+    "gulp-nodemon": "^1.0.4"
+  },
+  "browserify": {
+    "transform": [
+      "liveify"
+    ]
+  },
+  "config": {
+    "blanket": {
+      "pattern": "src/"
+    }
+  }
+}
