@@ -22,18 +22,16 @@ class Connection
 
 class Player
 
-  (@id, @color) ->
-    log "New Player", @color
-    @x = 0
-    @y = 0
-    @w = 20
-    @h = 20
+  ({ @id, @color, @size, @pos }:data) ->
+    log "New Player", @color, data
 
     @view = document.create-element \div
     @view.style <<< {
       background-color: @color
-      height: px @h
-      width: px @w
+      height: px @size.h
+      width: px @size.w
+      left: px @pos.x
+      top: px @pos.y
       position: \absolute
     }
 
@@ -46,13 +44,13 @@ class Player
 
   move-to: ({ x, y }) ->
     log "Player(#{@id})::move-to", x, y
-    @x = x
-    @y = y
+    @pos.x = x
+    @pos.y = y
 
   update-view: ->
-    log "Player(#{@id}):update-view", @x, @y
-    @view.style.left = px @x - @w /2
-    @view.style.top  = px @y - @h /2
+    log "Player(#{@id}):update-view", @pos
+    @view.style.left = px @pos.x - @size.w /2
+    @view.style.top  = px @pos.y - @size.h /2
 
 
 
@@ -69,25 +67,30 @@ update-everyone = ->
   for id, player of players
     player.update-view!
 
-field.add-event-listener \click, ({ clientX: x, clientY: y }) ->
-  me.move-to { x, y }
-  socket.emit \move, { x, y }
-  me.update-view!
+state = mousedown: no
+
+field.add-event-listener \mousedown, -> state.mousedown = yes
+field.add-event-listener \mouseup,   -> state.mousedown = no
+field.add-event-listener \mousemove, ({ clientX: x, clientY: y }) ->
+  if state.mousedown
+    me.move-to { x, y }
+    socket.emit \move, { x, y }
+    me.update-view!
 
 
 # connection
 
 socket = io "#{location.protocol}//#{location.hostname}:#{location.port}"
 
-socket.on \joined, ({ id, color }) ->
-  me := new Player id, color
+socket.on \joined, (data) ->
+  me := new Player data
   me.install field
   players[me.id] = me
   socket.emit \move, { x: me.x, y: me.y }
 
-socket.on \opponent-has-joined, ({ id, color }) ->
+socket.on \opponent-has-joined, ({ color }:data) ->
   log 'Socket::opponent-has-joined', color
-  player = new Player id, color
+  player = new Player data
   player.install field
   players[player.id] = player
   update-everyone!

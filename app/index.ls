@@ -30,9 +30,20 @@ http-server.listen 1337
 
 clients = []
 
+abs = Math.abs
+
+class Bounds
+  ({ @x, @y, @w, @h }) ->
+
+  @intersects = (a, b) ->
+    (abs(a.x - b.x) * 2 < (a.w + b.w)) and (abs(a.y - b.y) * 2 < (a.h + b.h))
+
+
 class PlayerData
-  ({ @id, @pos, @color }) ->
+  ({ @id, @pos, @color, @size }) ->
     log 'new PlayerData:', @color
+
+  get-bounding-box: -> new Bounds x: @pos.x, y: @pos.y, w: @size.w, h: @size.h
 
 
 class Client
@@ -46,6 +57,7 @@ class Client
     @player-data = new PlayerData do
       id: @id
       pos: { x: 0, y: 0 }
+      size: { w: 20, h: 20 }
       color: random-from colors
 
     @socket.emit \joined, @player-data
@@ -81,6 +93,10 @@ remove-dead-client = (dead-client) ->
   show-clients!
 
 broadcast-movements = (moved-client) ->
+  bounds = moved-client.player-data.get-bounding-box!
+
   for client in clients when client.id isnt moved-client.id
+    if Bounds.intersects client.player-data.get-bounding-box!, bounds
+      log 'collided!'
     client.opponent-has-moved moved-client.player-data
 
