@@ -75,6 +75,10 @@ class Client
   opponent-has-moved: (data) ->
     @socket.emit \opponent-has-moved, data
 
+  opponent-has-gone: (data) ->
+    @socket.emit \opponent-has-gone, data
+
+
 
 io = socket-io http-server
 
@@ -90,6 +94,7 @@ show-clients = -> log (clients |> map (.player-data.color))
 remove-dead-client = (dead-client) ->
   log 'Removing client:', dead-client.player-data.color
   clients := [ client for client in clients when client.id isnt dead-client.id ]
+  clients.map (.opponent-has-gone dead-client.player-data)
   show-clients!
 
 broadcast-movements = (moved-client) ->

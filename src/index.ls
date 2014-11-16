@@ -35,8 +35,8 @@ class Player
       position: \absolute
     }
 
-  install: (host) ->
-    host.append-child @view
+  install:   (host) -> host.append-child @view
+  uninstall: -> this.view.parent-node.remove-child this.view
 
   look-at: ({ x, y }) ->
 
@@ -83,6 +83,7 @@ field.add-event-listener \mousemove, ({ clientX: x, clientY: y }) ->
 socket = io "#{location.protocol}//#{location.hostname}:#{location.port}"
 
 socket.on \joined, (data) ->
+  players := {}
   me := new Player data
   me.install field
   players[me.id] = me
@@ -100,4 +101,8 @@ socket.on \opponent-has-moved, ({ id, pos, color }) ->
   players[id]?.set-pos pos
   update-everyone!
 
+socket.on \opponent-has-gone, ({ id, color }:data) ->
+  log 'Socket::opponent-has-gone', color
+  players[id].uninstall!
+  delete players[id]
 
