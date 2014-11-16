@@ -35,6 +35,10 @@ class Player
       position: \absolute
     }
 
+  show-collision: ->
+    @view.style.border = "2px solid red"
+    set-timeout (~> @view.style.border = "none"), 1000
+
   install:   (host) -> host.append-child @view
   uninstall: -> this.view.parent-node.remove-child this.view
 
@@ -105,4 +109,8 @@ socket.on \opponent-has-gone, ({ id, color }:data) ->
   log 'Socket::opponent-has-gone', color
   players[id].uninstall!
   delete players[id]
+
+socket.on \has-collided, ({ id }) ->
+  me.show-collision!
+  players[id].show-collision!
 

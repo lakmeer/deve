@@ -78,6 +78,8 @@ class Client
   opponent-has-gone: (data) ->
     @socket.emit \opponent-has-gone, data
 
+  has-collided: (data) ->
+    @socket.emit \has-collided, data
 
 
 io = socket-io http-server
@@ -102,6 +104,7 @@ broadcast-movements = (moved-client) ->
 
   for client in clients when client.id isnt moved-client.id
     if Bounds.intersects client.player-data.get-bounding-box!, bounds
-      log 'collided!'
+      client.has-collided moved-client.player-data
+      moved-client.has-collided client.player-data
     client.opponent-has-moved moved-client.player-data
 
