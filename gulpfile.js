@@ -6,6 +6,7 @@ var gulp       = require('gulp'),
     browserify = require('browserify'),
     nodemon    = require('gulp-nodemon'),
     source     = require('vinyl-source-stream'),
+    connect    = require('gulp-connect')
     lr         = require('gulp-livereload');
 
 
@@ -35,7 +36,12 @@ var bundler = browserify({
 // Tasks
 
 gulp.task('server', function () {
-  nodemon({ script: 'app/index.ls', ext: 'html js css ls', execMap: { "ls" : "lsc" } })
+  nodemon({
+    script: 'app/index.ls',
+    ext: 'html js css ls',
+    execMap: { "ls" : "lsc" },
+    ignore: [ 'client/*', 'src/*' ]
+  })
     .on('change',  function () {})
     .on('restart', function () {});
 });
