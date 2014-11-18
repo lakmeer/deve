@@ -10,18 +10,15 @@ map = (λ, l) --> [ λ x for x in l ]
 
 log = -> console.log.apply console, &; &0
 px = (+ \px)
+swallow = (λ) -> -> it.prevent-default!; λ ...
 
 
 # Classes
 
 class Connection
-
   (@port = 3001) ->
 
-
-
 class Player
-
   ({ @id, @color, @size, @pos }:data) ->
     log "New Player", @color, data
 
@@ -75,7 +72,15 @@ state = mousedown: no
 
 field.add-event-listener \mousedown, -> state.mousedown = yes
 field.add-event-listener \mouseup,   -> state.mousedown = no
-field.add-event-listener \mousemove, ({ clientX: x, clientY: y }) ->
+field.add-event-listener \mousemove, swallow ({ clientX: x, clientY: y }) ->
+  if state.mousedown
+    me.move-to { x, y }
+    socket.emit \move, { x, y }
+    me.update-view!
+
+field.add-event-listener \touchstart, -> state.mousedown = yes
+field.add-event-listener \touchend,   -> state.mousedown = no
+field.add-event-listener \touchmove, swallow ({ clientX: x, clientY: y }) ->
   if state.mousedown
     me.move-to { x, y }
     socket.emit \move, { x, y }

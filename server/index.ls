@@ -21,7 +21,7 @@ http-server = http.create-server (req, res) ->
   | '/' => '/index.html'
   | _   => that
 
-  fs.readFile  __dirname + '/../client' + resource,  (err, data) ->
+  fs.readFile  __dirname + '/../public' + resource,  (err, data) ->
     if (err)
       res.writeHead(500)
       return res.end('Error loading index.html')

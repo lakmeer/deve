@@ -28,8 +28,8 @@ var bundler = browserify({
   debug: true,
   cache: {},
   packageCache: {},
-  entries: [ './src/index.ls' ],
-  extensions: '.ls'
+  extensions: '.ls',
+  entries: [ './client/index.ls' ]
 });
 
 
@@ -37,13 +37,11 @@ var bundler = browserify({
 
 gulp.task('server', function () {
   nodemon({
-    script: 'app/index.ls',
+    script: 'server/index.ls',
     ext: 'html js css ls',
     execMap: { "ls" : "lsc" },
-    ignore: [ 'client/*', 'src/*' ]
-  })
-    .on('change',  function () {})
-    .on('restart', function () {});
+    ignore: [ 'public/*', 'client/*' ]
+  });
 });
 
 gulp.task('browserify', function () {
@@ -51,7 +49,7 @@ gulp.task('browserify', function () {
     .bundle()
     .on('error', handle)
     .pipe(source('app.js'))
-    .pipe(gulp.dest('client'))
+    .pipe(gulp.dest('public'))
 });
 
 
@@ -60,6 +58,6 @@ gulp.task('browserify', function () {
 gulp.task('default', [ 'server', 'browserify' ], function () {
   lr.listen();
   gulp.watch(['src/**/*.ls'], [ 'browserify' ]);
-  gulp.watch(['client/**/*']).on('change', lr.changed);
+  gulp.watch(['public/**/*']).on('change', lr.changed);
 });
 
