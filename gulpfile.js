@@ -57,7 +57,7 @@ gulp.task('browserify', function () {
 
 gulp.task('default', [ 'server', 'browserify' ], function () {
   lr.listen();
-  gulp.watch(['src/**/*.ls'], [ 'browserify' ]);
+  gulp.watch(['client/**/*.ls'], [ 'browserify' ]);
   gulp.watch(['public/**/*']).on('change', lr.changed);
 });
 

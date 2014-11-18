@@ -28,6 +28,7 @@ export class Client
     @socket.emit \joined, @player-data
 
     @socket.on \move, (pos) ~>
+      log \moved!, @player-data.color
       @player-data.pos = pos
       @callbacks.move this
 

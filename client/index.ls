@@ -80,7 +80,8 @@ field.add-event-listener \mousemove, swallow ({ clientX: x, clientY: y }) ->
 
 field.add-event-listener \touchstart, -> state.mousedown = yes
 field.add-event-listener \touchend,   -> state.mousedown = no
-field.add-event-listener \touchmove, swallow ({ clientX: x, clientY: y }) ->
+field.add-event-listener \touchmove, swallow (event) ->
+  { clientX: x, clientY: y } = event.changedTouches.0
   if state.mousedown
     me.move-to { x, y }
     socket.emit \move, { x, y }
