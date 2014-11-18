@@ -5,7 +5,7 @@ require! \fs
 require! \http
 require! \node-uuid
 
-{ SocketServer } = require \./socket-server
+SocketServer = require \./socket-server
 
 
 # Helpers
@@ -34,5 +34,5 @@ http-server.listen 1337
 
 # Attach socket server to existing webserver
 
-SocketServer.connect http-server
+SocketServer.listen http-server
 
